@@ -17,7 +17,6 @@ $row = mysqli_fetch_assoc($user_result);
                      src="<?= $row['images'] ?>" class="avatar img-circle img-thumbnail"
                      alt="avatar"><span class="font-weight-bold"></span><span
                         class="text-black-50"></span><span> </span></div>
-            <!--            <input type="file" class="text-center center-block file-upload" id="img" value="">-->
             <input class="text-center center-block file-upload" name="photo" type="file" id="imgs" accept="image/*"
                    onchange="document.getElementById('img').src = window.URL.createObjectURL(this.files[0])">
             <div class="mt-5 text-center">
@@ -50,20 +49,12 @@ $row = mysqli_fetch_assoc($user_result);
                                                                                              class="form-control"
                                                                                              placeholder="enter phone number"
                                                                                              value=""></div>
-                    <!--                    <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text" class="form-control" placeholder="enter address line 1" value=""></div>-->
-                    <!--                    <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>-->
-                    <!--                    <div class="col-md-12"><label class="labels">Postcode</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>-->
-                    <!--                    <div class="col-md-12"><label class="labels">State</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>-->
-                    <!--                    <div class="col-md-12"><label class="labels">Area</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>-->
                     <div class="col-md-12"><label class="labels">Email</label><input type="text" id="email" name="email"
                                                                                      class="form-control"
                                                                                      placeholder="enter email id"
                                                                                      value=""></div>
-                    <!--                    <div class="col-md-12"><label class="labels">Education</label><input type="text" class="form-control" placeholder="education" value=""></div>-->
                 </div>
                 <div class="row mt-3">
-                    <!--                    <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>-->
-                    <!--                    <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>-->
                 </div>
                 <div class="mt-5 text-center">
                     <button class="btn btn-primary profile-button" onclick="updateProfile()" type="button">Save
@@ -210,6 +201,7 @@ $row = mysqli_fetch_assoc($user_result);
 
     src = $('#img').attr('src');
 
+    //funksioni per ndryshimin e fotos
     function updatePhoto(src) {
 
         var formdata = new FormData();
@@ -259,6 +251,7 @@ $row = mysqli_fetch_assoc($user_result);
         });
     }
 
+    //funksioni per ndryshimin e fjalkalimit
     function updatepassword() {
         //let userID = $('#userid').val();
         let oldpass = $('#oldpass').val();
@@ -266,25 +259,33 @@ $row = mysqli_fetch_assoc($user_result);
         let verifypass = $('#verifypass').val();
         let password_regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,1000}$/;
 
+        let flag = false;
+
         if (!password_regex.test(newpass)) {
             $('#newpass').addClass('red_border');
+            flag = true;
             //toastr.error("Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character");
         } else {
             $('#newpass').removeClass('red_border');
         }
         if (!password_regex.test(oldpass)) {
             $('#oldpass').addClass('red_border');
+            flag = true;
             //toastr.error("Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character");
         } else {
             $('#oldpass').removeClass('red_border');
         }
         if (!password_regex.test(verifypass)) {
             $('#verifypass').addClass('red_border');
+            flag = true;
+
             //toastr.error("Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character");
         } else {
             $('#verifypass').removeClass('red_border');
         }
-
+        if (flag) {
+            return;
+        }
         swal({
             title: "Are you sure?",
             text: "Once deleted, you will not be able to recover this password!",

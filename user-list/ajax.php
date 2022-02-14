@@ -1,62 +1,19 @@
 <?php
-session_start();
 
-require_once "functions.php";
-require_once "db_conn.php";
-if ($_POST['action'] == 'login') {
+require_once "../functions.php";
+require_once "../db_conn.php";
 
-    $uname = trim(mysqli_real_escape_string($conn, $_POST['uname']));
-    $pass = mysqli_real_escape_string($conn, $_POST['pass']);
-    //$hash = password_hash($pass,PASSWORD_BCRYPT);
-
-    if (empty($uname)) {
-        echo json_encode(array('status' => '404', 'message' => 'Username eshte bosh'));
-        exit();
-    } elseif (empty($pass)) {
-        echo json_encode(array('status' => '404', 'message' => 'Fjalkalimi eshte bosh'));
-        exit();
-    }
-
-    $query_get_data = "SELECT email,
-                              password,
-                              Roli,
-                              ID,
-                              images,
-                              first_name
-                              FROM adm WHERE email='$uname' OR phone='$uname'";
-    $result = mysqli_query($conn, $query_get_data);
-    if (mysqli_num_rows($result) === 1) {
-        $row = mysqli_fetch_assoc($result);
-        if (md5($pass) == $row['password']) {
-            $_SESSION['first_name'] = $row['first_name'];
-            $_SESSION['email'] = $row['email'];
-            //$_SESSION['password'] = $row['password'];
-            $_SESSION['Roli'] = $row['Roli'];
-            $_SESSION['id'] = $row['ID'];
-            $_SESSION['images'] = $row['images'];
-
-            echo json_encode(array('status' => '200', 'message' => 'User logged in!'));
-            exit();
-        } else {
-            echo json_encode(array('status' => '404', 'message' => 'Password i pasakte!'));
-            exit();
-        }
-    } else {
-        echo json_encode(array('status' => '404', 'message' => 'Emaili ose passwordi eshte i gabuar!'));
-        exit();
-    }
-
-} elseif ($_POST['action'] == 'signup') {
-    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $atesia = mysqli_real_escape_string($conn, $_POST['atesia']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $birthday = mysqli_real_escape_string($conn, $_POST['birthday']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+if ($_POST['action'] == 'register') {
+    $first_name = mysqli_real_escape_string($conn, $_POST['addfirst_name']);
+    $last_name = mysqli_real_escape_string($conn, $_POST['addlast_name']);
+    $atesia = mysqli_real_escape_string($conn, $_POST['addatesia']);
+    $roli = mysqli_real_escape_string($conn, $_POST['addroli']);
+    $phone = mysqli_real_escape_string($conn, $_POST['addphone']);
+    $birthday = mysqli_real_escape_string($conn, $_POST['addbirthday']);
+    $email = mysqli_real_escape_string($conn, $_POST['addemail']);
     $username = strtolower($first_name[0]) . strtolower($last_name);
+    $password = mysqli_real_escape_string($conn, $_POST['addpassword']);
     $image = 'images/default.jpg';
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    $cpassword = mysqli_real_escape_string($conn,$_POST['cpassword']);
     if (!preg_match("/^[a-zA-z]*$/", $first_name)) {
         echo json_encode(array('status' => '404', 'message' => 'Emri jo i sakte'));
         exit();
@@ -75,6 +32,9 @@ if ($_POST['action'] == 'login') {
     } elseif ($atesia == "") {
         echo json_encode(array('status' => '404', 'message' => 'Vendosni atesine'));
         exit();
+    } elseif ($roli == "") {
+        echo json_encode(array('status' => '404', 'message' => 'zgjidhni rolin'));
+        exit();
     } elseif (!preg_match("/^[0-9]*$/", $phone)) {
         echo json_encode(array('status' => '404', 'message' => 'Lejohen vetem vlera numerike'));
         exit();
@@ -87,20 +47,15 @@ if ($_POST['action'] == 'login') {
         exit();
     }
     $hash = md5($password);
-    $chash = md5($cpassword);
-    if ($hash!=$chash){
-        echo json_encode(array('status'=>'404','message'=>'Passwordi i vene nuk perputhet me confirm password'));
-        exit();
-    }
 
-    $select = mysqli_query($conn, "SELECT ID FROM adm WHERE email = '" . $_POST['email'] . "' OR phone = '" . $_POST['phone'] . "'");
+    $select = mysqli_query($conn, "SELECT ID FROM adm WHERE email = '" . $_POST['addemail'] . "' OR phone = '" . $_POST['addphone'] . "'");
     if (mysqli_num_rows($select) > 0) {
         //$row = mysqli_fetch_assoc($select);
         {
-            if ($phone == $_POST['phone']) {
+            if ($phone == $_POST['addphone']) {
                 echo json_encode(array('status' => '404', 'message' => 'Ky nr teli  eshte perdorur!'));
                 exit();
-            } elseif ($email == $_POST['email']) {
+            } elseif ($email == $_POST['addemail']) {
                 echo json_encode(array('status' => '404', 'message' => 'Ky email eshte perdorur!'));
                 exit();
             }
@@ -108,15 +63,14 @@ if ($_POST['action'] == 'login') {
 
 
     }
-    $roli = "user";
     $query_register_user = "INSERT INTO adm SET first_name = '" . $first_name . "',
                                                 last_name = '" . $last_name . "',
                                                 phone = '" . $phone . "',
                                                 username = '" . $username . "',
                                                 password = '" . $hash . "',
+                                                Roli = '" . $roli . "',
                                                 dob = '" . $birthday . "',
                                                 email = '" . $email . "',
-                                                Roli = '" . $roli . "',
                                                 images = '" . $image . "',
                                                 atesia = '" . $atesia . "'
                                                 ";
@@ -130,25 +84,7 @@ if ($_POST['action'] == 'login') {
         exit();
     }
 
-
-    //echo json_encode(array('status' => '200', 'message' => 'User logged in!'));
-    /*$query_register_user = "INSERT INTO adm SET first_name = '" . $first_name . "',
-                                                last_name = '" . $last_name . "',
-                                                phone = '" . $phone . "',
-                                                username = '" . $username . "',
-                                                password = '" . $password . "',
-                                                dob = '" . $birthday . "',
-                                                email = '" . $email . "',
-                                                atesia = '" . $atesia . "',
-                                                ";
-    $result_register_user = mysqli_query($conn, $query_register_user);
-    if (!$result_register_user) {
-        //echo json_encode(array('status' => '404', 'message' => 'Emaili ne forme jo te sakte'));
-    }
-    //Header("Location:ajax.php");*/
-} // SERVER SIDE TABLE
-
-elseif ($_POST['action'] == 'list') {
+} elseif ($_POST['action'] == 'list') {
 
     $draw = $_POST['draw'];
     $limit_start = $_POST['start'];
@@ -251,7 +187,7 @@ elseif ($_POST['action'] == 'list') {
     foreach ($data as $key => $row) {
         $image = '';
         if ($row['images']) {
-            $image = '<img src = "' . $row['images'] . '" width = "50px" height = "50px" > ';
+            $image = '<img src = "../' . $row['images'] . '" width = "50px" height = "50px" > ';
         }
 
         $table_data[] = array("id" => $row['ID'],
@@ -294,23 +230,5 @@ elseif ($_POST['action'] == 'list') {
     $row = mysqli_fetch_assoc($query_get_user);
     echo json_encode(array('status' => '200', 'message' => $row));
     exit();
-} elseif ($_POST['action'] == 'profile') {
-    $id = mysqli_real_escape_string($conn, $_POST['usereditid']);
-    //printArray($id);
-    $sql = "SELECT first_name,
-                              last_name,
-                              atesia,
-                              phone,
-                              dob,
-                              email,
-                              images,
-                              username
-                              FROM adm WHERE ID='$id'";
-    $query_get_user = mysqli_query($conn, $sql);
-    if (!$query_get_user) {
-        echo json_encode(array('status' => '404', 'message' => 'Error ne databaze' . __LINE__));
-    }
-    $row = mysqli_fetch_assoc($query_get_user);
-    echo json_encode(array('status' => '200', 'message' => $row));
-    exit();
 }
+

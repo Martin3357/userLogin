@@ -1,188 +1,4 @@
-<?php
-error_reporting(E_ALL ^ E_NOTICE);
-
-session_start();
- if ($_SESSION['Roli'] != 'admin') {
-    header('Location: welcome.php');
-}
-require_once "top_menu.php";
-//require_once "functions.php";
-
-?>
-
-<style>
-    .content {
-        max-width: 800px;
-        margin: auto;
-
-    }
-
-    h1 {
-        text-align: center;
-        padding-bottom: 60px;
-    }
-</style>
-<br><br>
-<div class="content">
-    <button type="button" id="add_button" data-toggle="modal" data-target="#editModal" class="btn btn-success"
-            style="background: #0faaf7">Add User
-    </button>
-    <br><br>
-    <?php
-    $query = "SELECT *FROM adm";
-    $query_run = mysqli_query($conn, $query);
-    $row = mysqli_fetch_assoc($query_run);
-    $id = $row['ID'];
-    ?>
-    <table class="table table-striped table-hover dataTables " id="datatable">
-        <thead bgcolor="pink">
-        <tr class="table-primary">
-            <!--            <th scope="col">ID</th>-->
-            <th scope="col">ID</th>
-            <th scope="col">Emer</th>
-            <th scope="col">Mbiemer</th>
-            <th scope="col">Nr_Tel</th>
-            <th scope="col">Email</th>
-            <th scope="col">Datelindja</th>
-            <th scope="col">Roli</th>
-            <th scope="col">Images</th>
-            <th scope="col">Action</th>
-        </tr>
-        </thead>
-    </table>
-</div>
-<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h2>Edit User</h2>
-                <span id="error"></span>
-                <p class="hint-text"></p>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col"><input type="text" class="form-control" name="first_name" id="first_name"
-                                                placeholder="First Name" required="required" onchange="fillUsername()">
-                        </div>
-                        <div class="col"><input type="text" class="form-control" name="last_name" id="last_name"
-                                                placeholder="Last Name" required="required" onchange="fillUsername()">
-                        </div>
-                    </div>
-                </div>
-                <input type="hidden" name="userid" id="userid">
-                <!--                <div class="form-group">-->
-                <!--                    <input type="text" class="form-control" name="atesia" id="atesia" placeholder="Atesia"-->
-                <!--                           required="required">-->
-                <!--                </div>-->
-                <div class="form-group">
-                    <input type="tel" id="phone" name="phone" placeholder="06..." pattern="[0-9]{10}"
-                           required="required">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="birthday" name="birthday" class="form-control" required="required">
-                </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email"
-                           required="required">
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="username" id="username" placeholder="Username"
-                           disabled>
-                </div>
-                <!--                <div class="form-group">-->
-                <!--                    <input type="password" class="form-control" name="password" id="password" placeholder="Password"-->
-                <!--                           required="required">-->
-                <!--                </div>-->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button id='userupdate' type="button" onclick="updateUser()" class='btn btn-success'
-                        data-toggle='modal'>Update
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--Shtimi i nje useri te ri  -->
-
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Sign Up</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h2>Add User</h2>
-                <span id="error"></span>
-                <p class="hint-text">Shto nje user te ri</p>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col"><input type="text" class="form-control" name="first_name" id="addfirst_name"
-                                                placeholder="First Name" required="required"
-                                                onchange="addfillUsername()">
-                        </div>
-                        <div class="col"><input type="text" class="form-control" name="last_name" id="addlast_name"
-                                                placeholder="Last Name" required="required"
-                                                onchange="addfillUsername()">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="atesia" id="addatesia" placeholder="Atesia"
-                           required="required">
-                </div>
-                <div class="form-group">
-                    <label for="cars">Zgjidh rolin:</label>
-                    <select name="Roli" id="addroli" required>
-                        <option value=""></option>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="addphone" name="phone" placeholder="06..." pattern="[0-9]{10}"
-                           required="required">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="addbirthday" name="addbirthday" placeholder="birthday" class="form-control"
-                           required="required" autocomplete="off">
-                    <span class="error" id="lblError"></span>
-                </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" name="email" id="addemail" placeholder="Email"
-                           required="required">
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="username" id="addusername" placeholder="Username"
-                           disabled>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" name="password" id="addpassword" placeholder="Password"
-                           required="required">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" onclick="addUser()" class="btn btn-primary" id="addUser">Add</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-
-    //datatable
     $(document).ready(function () {
         window.dt = $('#datatable').DataTable({
             processing: true,
@@ -209,30 +25,6 @@ require_once "top_menu.php";
 
 
             ],
-            // columnDefs: [
-            //     {
-            //         orderable: false,
-            //         searchable: false,
-            //         targets: 0
-            //
-            //     },
-            //     {
-            //         class: "calss-name",
-            //         targets: [3, 5]
-            //     },
-            //     {
-            //         visible: false
-            //     }
-            // ],
-            // aaSorting: [[5, 'asc']],
-            // order: [[ 1, "desc" ]],
-
-            // l - length changing input control
-            // f - filtering input
-            // t - The table!
-            // i - Table information summary
-            // p - pagination control
-            // r - processing display element
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [
                 {
@@ -394,7 +186,7 @@ require_once "top_menu.php";
 
         $.ajax({
 
-            url: 'registeruserback.php',
+            url: 'ajax.php',
             type: 'POST',
             data: {
                 'action': 'register',
@@ -527,7 +319,7 @@ require_once "top_menu.php";
 
         $.ajax({
 
-            url: 'update.php',
+            url: 'ajax.php',
             type: 'POST',
             data: {
                 'action': 'update',
@@ -576,7 +368,7 @@ require_once "top_menu.php";
                 if (willDelete) {
                     $.ajax({
 
-                        url: 'delete.php',
+                        url: 'ajax.php',
                         type: 'POST',
                         data: {
                             'action': 'delete',

@@ -110,6 +110,7 @@ if ($_POST['action'] == 'update') {
     }
     echo json_encode(array('status' => '200', 'message' => "U editua me sukses"));
     exit();
+
 } elseif ($_POST['action'] == 'updatepassword') {
     $id = $_SESSION['id'];
     $old = mysqli_real_escape_string($conn, $_POST['oldpass']);

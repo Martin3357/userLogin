@@ -26,17 +26,20 @@ echo ' <li class="nav-item active">
             <li class="nav-item">
                 <a class="nav-link" href="profili.php">Profili</a>
             </li>
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
+            <li class="nav-item active">
+                <a class="nav-link" href="checkin.php">Check in<span class="sr-only">(current)</span></a>
             </li>
+<!---->
+<!--            <li class="nav-item dropdown">-->
+<!--                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"-->
+<!--                   aria-haspopup="true" aria-expanded="false">Dropdown</a>-->
+<!--                <div class="dropdown-menu" aria-labelledby="dropdown01">-->
+<!---->
+<!--                    <a class="dropdown-item" href="#">Action</a>-->
+<!--                    <a class="dropdown-item" href="#">Another action</a>-->
+<!--                    <a class="dropdown-item" href="#">Something else here</a>-->
+<!--                </div>-->
+<!--            </li>-->
         </ul>
 
         <a href="logout.php" style="margin: 2px" class="btn btn-primary">Logout</a>

@@ -80,6 +80,10 @@
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password"
                            required="required">
                 </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Verify"
+                           required="required">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -127,6 +131,7 @@
         let birthday = $('#birthday').val();
         let email = $('#email').val();
         let password = $('#password').val();
+        let cpassword = $('#cpassword').val();
         let name_regex = /^[A-Za-z\s]+$/;
         let last_regex = /^[A-Za-z\s]+$/;
         let atesia_regex = /^[A-Za-z\s]+$/;
@@ -202,6 +207,7 @@
                 'birthday': birthday,
                 'email': email,
                 'password': password,
+                'cpassword':cpassword,
             },
             dataType: 'json',
             success: function (response) {
@@ -221,10 +227,10 @@
         let last_name = $('#last_name').val();
         let name_regex = /^[A-Za-z\s]+$/;
         if (name_regex.test(first_name) && name_regex.test(last_name)) {
-            $('#username').val(first_name[0] + last_name);
+            $('#username').val((first_name[0] + last_name).toLowerCase());
         }
     }
-
+//datarange picker
     $(function () {
 
 
