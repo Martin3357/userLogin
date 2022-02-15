@@ -116,6 +116,15 @@
     -webkit-transition: all 0.218s;
     transition: all 0.218s;
 }
+td.details-control{
+    text-align: center;
+    color: forestgreen;
+    cursor: pointer;
+}
+tr.show td.details-control{
+    text-align: center;
+    color: red;
+}
 
 .btn.btn-signin:hover,
 .btn.btn-signin:active,
