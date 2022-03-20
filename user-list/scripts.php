@@ -1,17 +1,57 @@
 <script>
+    $('#user').addClass('active');
+    //funksioni i datarange picker
+    $(function () {
+
+        $('input[name="daterange"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+
+        $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + '   /   ' + picker.endDate.format('YYYY-MM-DD'));
+        });
+
+        $('input[name="daterange"]').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+
+    });
+
+
+    //datatable
     $(document).ready(function () {
+
+
         window.dt = $('#datatable').DataTable({
             processing: true,
             serverSide: true,
             paging: true,
+            searchDelay: 1250,
 
             serverMethod: 'POST',
             ajax: {
-                url: "ajax.php",
-                data: {
-                    action: "list"
+                url: "user-list/ajax.php",
+
+                data: function (data) {
+                    let emails = $('#email_search').val();
+
+                    let emailsstr = "'" + emails.join("','") + "'";
+                    if (emailsstr != "''") {
+                        data.email_search = emailsstr;
+                    }
+
+                    data.data_flt = $('#datafilter').val();
+
+                    data.phone_search = $('#nr_Tel').val();
+                    data.action = 'list';
+                    data.name_serch_product = '<?= $_GET['ids']?>';
+                    // console.log(data.name_serch_product);
                 }
             },
+
             columns: [
                 {data: "id", name: "ID"},
                 {data: "firstname", name: "first_name"},
@@ -21,17 +61,22 @@
                 {data: "birthday", name: "dob"},
                 {data: "post", name: "Roli"},
                 {data: "images", name: "images"},
-                {data: "action"}
+                {data: "action",orderable:false}
 
 
             ],
+            "drawCallback": function (data) {
+                window.tableData = data.json;
+            },
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [
+
                 {
 
                     order: [],
                     paging: true,
                     searching: true,
+
                     extend: 'excel',
                     columnDefs: [
                         {
@@ -70,13 +115,12 @@
         });
     });
 
-    //funksioni per mbushjen automatike te modalit pasi klikojme butonin edit
-    function userEdit(userID) {
-
+//funksioni per te bere aoutocomplete modalin pasi shtypim edit
+    function allowShowUser(userID) {
 
         $.ajax({
 
-            url: 'ajax.php',
+            url: 'user-list/ajax.php',
             type: 'POST',
             data: {
                 'action': 'edit',
@@ -84,6 +128,7 @@
             },
             dataType: 'json',
             success: function (response) {
+
                 if (response.status == 200) {
                     $('#first_name').val(response.message['first_name']);
                     $('#last_name').val(response.message['last_name']);
@@ -92,11 +137,16 @@
                     $('#birthday').val(response.message['dob']);
                     $('#email').val(response.message['email']);
                     $('#username').val(response.message['username']);
+                    $('#image').attr('src',"http://localhost/Projekti/"+ response.message['images']);
+                    $('#dw').attr('href', response.message['images']);
                     $('#userid').val(userID);
+
+                    $('#userModal').modal('toggle');
 
 
                 } else {
                     toastr.error(response.message)
+                    toastr.options.preventDuplicates = true;
                 }
             }
         });
@@ -113,11 +163,11 @@
         let birthday = $('#addbirthday').val();
         let email = $('#addemail').val();
         let password = $('#addpassword').val();
+        let cpassword = $('#caddpassword').val();
         //let username=$('#addusername').val();
         let name_regex = /^[A-Za-z\s]+$/;
         let last_regex = /^[A-Za-z\s]+$/;
         let atesia_regex = /^[A-Za-z\s]+$/;
-
         let phone_regex = /^[0-9]+$/;
         let email_regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         let birthday_regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
@@ -125,21 +175,21 @@
 
         if (!name_regex.test(first_name) || !last_regex.test(last_name) || !atesia_regex.test(atesia) || !roli || !phone_regex.test(phone) || !email_regex.test(email) || !birthday_regex.test(birthday)) {
             $('#addfirst_name').addClass('red_border');
-            if (!name_regex.test(first_name)) {
+            if (!name_regex.test(first_name.trim())) {
                 $('#addfirst_name').addClass('red_border');
                 //toastr.error("Emri jo i sakte");
             } else {
                 $('#addfirst_name').removeClass('red_border');
             }
             $('#addlast_name').addClass('red_border');
-            if (!last_regex.test(last_name)) {
+            if (!last_regex.test(last_name.trim())) {
                 $('#addlast_name').addClass('red_border');
                 //toastr.error("Mbiemri jo i sakte");
             } else {
                 $('#addlast_name').removeClass('red_border');
             }
             $('#atesia').addClass('red_border');
-            if (!atesia_regex.test(atesia)) {
+            if (!atesia_regex.test(atesia.trim())) {
                 $('#addatesia').addClass('red_border');
                 //toastr.error("Vendosni atesine");
             } else {
@@ -152,7 +202,7 @@
             } else {
                 $('#addroli').removeClass('red_border');
             }
-            if (!phone_regex.test(phone)) {
+            if (!phone_regex.test(phone.trim())) {
                 $('#addphone').addClass('red_border');
                 //toastr.error("Vendosni numrin e telefonit");
 
@@ -160,12 +210,12 @@
                 $('#addphone').removeClass('red_border');
 
             }
-            if (!birthday_regex.test(birthday)) {
+            if (!birthday_regex.test(birthday.trim())) {
                 $('#addbirthday').addClass('red_border');
             } else {
                 $('#addbirthday').removeClass('red_border');
             }
-            if (!email_regex.test(email)) {
+            if (!email_regex.test(email.trim())) {
                 $('#addemail').addClass('red_border');
                 //toastr.error("Email jo i sakte");
 
@@ -182,23 +232,29 @@
             toastr.options.preventDuplicates = true;
             return;
         }
-
-
+        let src = $('#foto').attr('src');
+        var formdata = new FormData();
+        let foto = $('#fotoo')[0].files[0];
+        formdata.append('action', 'register');
+        formdata.append('foto', foto);
+        formdata.append('oldPath', src);
+        formdata.append('addfirst_name', first_name);
+        formdata.append('addlast_name', last_name);
+        formdata.append('addatesia', atesia);
+        formdata.append('addroli', roli);
+        formdata.append('addphone', phone);
+        formdata.append('addbirthday', birthday);
+        formdata.append('addemail', email);
+        formdata.append('addpassword', password);
+        formdata.append('caddpassword', cpassword);
         $.ajax({
 
-            url: 'ajax.php',
+            url: 'user-list/ajax.php',
             type: 'POST',
-            data: {
-                'action': 'register',
-                'addfirst_name': first_name,
-                'addlast_name': last_name,
-                'addatesia': atesia,
-                'addroli': roli,
-                'addphone': phone,
-                'addbirthday': birthday,
-                'addemail': email,
-                'addpassword': password,
-            },
+            data: formdata,
+            contentType: false,
+            processData: false,
+            cache: false,
             dataType: 'json',
             success: function (response) {
                 if (response.status == 200) {
@@ -208,9 +264,14 @@
                         icon: "success",
                         button: "Okay",
                     }).then(function () {
-                        location.reload()
+                        $('#editModal').modal('hide');
+                        $('#datatable').DataTable().ajax.reload();
+                        // dt.draw();
+                        // $('#editModal').modal('hide');
                     });
 
+
+                    //window.location.href = 'shto.php'
 
                 } else {
                     toastr.error(response.message)
@@ -220,6 +281,7 @@
         });
     }
 
+    //plotesimi automatik i username-it
     function addfillUsername() {
         let first_name = $('#addfirst_name').val();
         let last_name = $('#addlast_name').val();
@@ -229,9 +291,8 @@
         }
     }
 
+//funksioni i data range picker kur shtojme nje user te ri
     $(function () {
-
-
         $('input[name="addbirthday"]').daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
@@ -247,6 +308,7 @@
         $('#addbirthday').val('')
     });
 
+    //funksioni i data range picker kur editojme nje user
     $(function () {
 
 
@@ -266,7 +328,7 @@
         $('#birthday').val('')
     });
 
-    //plotesimi automatik i username-it
+    //plotesimi automatik i username-it ne momentin e editimit
     function fillUsername() {
         let first_name = $('#first_name').val();
         let last_name = $('#last_name').val();
@@ -284,12 +346,17 @@
         let birthday = $('#birthday').val();
         let email = $('#email').val();
         let userID = $('#userid').val();
-
+        let src = $('#image').attr('src');
+        var formdata = new FormData();
+        let imgs = $('#imgs')[0].files[0];
         let name_regex = /^[A-Za-z\s]+$/;
         let last_regex = /^[A-Za-z\s]+$/;
         let phone_regex = /^[0-9]+$/;
         let email_regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         let birthday_regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+        formdata.append('action', 'update');
+        formdata.append('foto', imgs);
+        formdata.append('oldPath', src);
         if (!name_regex.test(first_name)) {
             $('#first_name').addClass('red_border');
         } else {
@@ -316,20 +383,20 @@
             $('#birthday').removeClass('red_border');
         }
 
-
+        formdata.append('userupdateid', userID);
+        formdata.append('first_name', first_name);
+        formdata.append('last_name', last_name);
+        formdata.append('phone', phone);
+        formdata.append('birthday', birthday);
+        formdata.append('email', email);
         $.ajax({
 
-            url: 'ajax.php',
+            url: 'user-list/ajax.php',
             type: 'POST',
-            data: {
-                'action': 'update',
-                'userupdateid': userID,
-                'first_name': first_name,
-                'last_name': last_name,
-                'phone': phone,
-                'birthday': birthday,
-                'email': email
-            },
+            data: formdata,
+            contentType: false,
+            processData: false,
+            cache: false,
             dataType: 'json',
             success: function (response) {
                 if (response.status == 200) {
@@ -339,9 +406,14 @@
                         icon: "success",
                         button: "Okay",
                     }).then(function () {
-                        location.reload()
+                        //console.log("martin");
+                        //alert(data);
+                        //$('#userModal')[0].reset();
+                        $('#userModal').modal('hide');
+                        $('#datatable').DataTable().ajax.reload();
+                        //location.reload();
                         // dt.draw();
-                        // $('#editModal').modal('hide');
+                        // $('#userModal').modal('toggle');
                     });
 
 
@@ -368,7 +440,7 @@
                 if (willDelete) {
                     $.ajax({
 
-                        url: 'ajax.php',
+                        url: 'user-list/ajax.php',
                         type: 'POST',
                         data: {
                             'action': 'delete',
@@ -378,7 +450,8 @@
                         success: function (response) {
                             if (response.status == 200) {
                                 swal("U fshi me sukses!").then(function () {
-                                    location.reload()
+
+                                    $('#datatable').DataTable().ajax.reload();
                                 });
                             } else {
                                 toastr.error(response.message)
@@ -391,6 +464,7 @@
             });
     }
 
+    //funksioni per te boshatisur modalin pasi shtojme nje user
     $('#editModal').on('hidden.bs.modal', function (e) {
         $(this)
             .find("input,textarea,select")
@@ -400,4 +474,78 @@
             .prop("checked", "")
             .end();
     })
+//selec2 per emailin
+    $(document).ready(function () {
+        $('.email_select2').select2({
+            placeholder: "Email...",
+            language: {
+                noResults: function () {
+                    return "no results found"
+                },
+            },
+            ajax: {
+                url: 'user-list/ajax.php?action=get_all_emails',
+                type: 'get',
+                delay: 1000,
+                data: function (params) {
+
+                    return {
+                        search: params.term,
+
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: JSON.parse(data),
+                    }
+                },
+            }
+        });
+
+    });
+//selec2 per nr e telefonit
+    $(document).ready(function () {
+
+        $("#nr_Tel").select2({
+            width: '100%',
+            minimumInputLength: 3,
+            allowClear: true,
+            placeholder: "Nr Tel...",
+            language: {
+                noResults: function () {
+                    return "no results found"
+                },
+            },
+
+
+            ajax: {
+                url: 'user-list/ajax.php?action=get_all_numbers',
+                type: 'get',
+                delay: 1000,
+                data: function (params) {
+
+                    return {
+                        search: params.term
+
+                    };
+                },
+                processResults: function (data) {
+
+                    return {
+                        results: JSON.parse(data),
+
+                    }
+
+                },
+
+            }
+        });
+    });
+
+//funksioni per reloadin e datatables pasi bejme filtrimin ne baze dates emailit apo nr telefonit
+    $('#filter_button').click(function () {
+
+        $('#datatable').DataTable().ajax.reload();
+        // $("#nr_Tel").empty().trigger('change')
+    });
 </script>

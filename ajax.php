@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+error_reporting(E_ALL & ~E_NOTICE);
+
 require_once "functions.php";
 require_once "db_conn.php";
 if ($_POST['action'] == 'login') {
@@ -46,7 +48,8 @@ if ($_POST['action'] == 'login') {
         exit();
     }
 
-} elseif ($_POST['action'] == 'signup') {
+}
+elseif ($_POST['action'] == 'signup') {
     $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
     $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
     $atesia = mysqli_real_escape_string($conn, $_POST['atesia']);
@@ -130,187 +133,4 @@ if ($_POST['action'] == 'login') {
         exit();
     }
 
-
-    //echo json_encode(array('status' => '200', 'message' => 'User logged in!'));
-    /*$query_register_user = "INSERT INTO adm SET first_name = '" . $first_name . "',
-                                                last_name = '" . $last_name . "',
-                                                phone = '" . $phone . "',
-                                                username = '" . $username . "',
-                                                password = '" . $password . "',
-                                                dob = '" . $birthday . "',
-                                                email = '" . $email . "',
-                                                atesia = '" . $atesia . "',
-                                                ";
-    $result_register_user = mysqli_query($conn, $query_register_user);
-    if (!$result_register_user) {
-        //echo json_encode(array('status' => '404', 'message' => 'Emaili ne forme jo te sakte'));
-    }
-    //Header("Location:ajax.php");*/
-} // SERVER SIDE TABLE
-
-elseif ($_POST['action'] == 'list') {
-
-    $draw = $_POST['draw'];
-    $limit_start = $_POST['start'];
-    $limit_end = $_POST['length'];
-    $columnIndex = $_POST['order'][0]['column'];
-    $columnName = $_POST['columns'][$columnIndex]['data'];
-    $columnSortOrder = $_POST['order'][0]['dir'];
-
-    $search_value = $_POST['search']['value'];
-    $searchQuery = '';
-    if (!empty($search_value)) {
-        $searchQuery = " AND (
-             first_name LIKE '%" . $search_value . "%' OR 	
-            last_name LIKE '%" . $search_value . "%' OR 	
-            phone LIKE '%" . $search_value . "%' OR
-            email LIKE '%" . $search_value . "%' OR 
-            dob LIKE '%" . $search_value . "%' OR
-            Roli LIKE '%" . $search_value . "%')";
-    }
-    /**
-     * Merr numrin total te rekordeve pa aplikuar filtrat. Psh kur shfaqim 10/30 rekorde,
-     * numrin tital e marrim permes ketij query
-     */
-    $query_without_ftl = "SELECT COUNT(*) AS allcount 
-                          FROM adm where 1 = 1 $searchQuery";
-
-    $reuslt_without_ftl = mysqli_query($conn, $query_without_ftl);
-
-    if (!$reuslt_without_ftl) {
-        $error = mysqli_error($conn) . " " . __LINE__;
-    }
-
-    $records = mysqli_fetch_assoc($reuslt_without_ftl);
-    $totalRecords = $records['allcount'];
-
-
-    /**
-     * Numrin total te rekordeve duke aplikuar filtrin search
-     */
-    $query_with_ftl = "SELECT COUNT(*) AS allcount 
-                       FROM  adm 
-                       where  1 = 1 $searchQuery";
-
-    $result_with_ftl = mysqli_query($conn, $query_with_ftl);
-    if (!$result_with_ftl) {
-        $error = mysqli_error($conn) . " " . __LINE__;
-    }
-
-    $records_with_ftl = mysqli_fetch_assoc($result_with_ftl);
-    $totalRecordflt = $records_with_ftl['allcount'];
-
-
-    $query_user = "SELECT * FROM adm WHERE 1=1 ";
-
-
-    if ($_POST['search']['value']) {
-        $query_user .= "AND first_name like'%" . $search_value . "%'";
-        $query_user .= "OR last_name like '%" . $search_value . "%'";
-        $query_user .= "OR phone like '%" . $search_value . "%'";
-        $query_user .= "OR email like '%" . $search_value . "%'";
-        $query_user .= "OR dob like '%" . $search_value . "%'";
-        $query_user .= "OR Roli like '%" . $search_value . "%'";
-    }
-
-
-    if ($_POST['order']) {
-        $column = $_POST['order'][0]['column'];
-
-        $column_name = $_POST['columns'][$column]['name'];
-        $order = strtoupper($_POST['order'][0]['dir']);
-        $query_user .= "ORDER BY " . $column_name . " " . $order . " ";
-    } else {
-        $query_user .= "ORDER BY ID ASC";
-    }
-
-
-    if ($_POST['length'] != -1) {
-        $start = $_POST['start'];
-        $length = $_POST['length'];
-        $query_user .= "LIMIT " . $start . "," . $length;
-    }
-
-
-    $user_result = mysqli_query($conn, $query_user);
-
-    $table_data = [];
-    $data = array();
-
-    while ($row = mysqli_fetch_assoc($user_result)) {
-        $data[$row['ID']]['ID'] = $row['ID'];
-        $data[$row['ID']]['firstname'] = $row['first_name'];
-        $data[$row['ID']]['lastname'] = $row['last_name'];
-        $data[$row['ID']]['phone'] = $row['phone'];
-        $data[$row['ID']]['email'] = $row['email'];
-        $data[$row['ID']]['birthday'] = $row['dob'];
-        $data[$row['ID']]['post'] = $row['Roli'];
-        $data[$row['ID']]['images'] = $row['images'];
-    }
-
-    foreach ($data as $key => $row) {
-        $image = '';
-        if ($row['images']) {
-            $image = '<img src = "' . $row['images'] . '" width = "50px" height = "50px" > ';
-        }
-
-        $table_data[] = array("id" => $row['ID'],
-            "firstname" => $row['firstname'],
-            "lastname" => $row['lastname'],
-            "phone" => $row['phone'],
-            "email" => $row['email'],
-            "birthday" => $row['birthday'],
-            "post" => $row['post'],
-            "images" => $image,
-            "action" => "<div class='row'>
-                            <nobr>
-                                <button id='usereditid' onclick='userEdit(" . $row['ID'] . ")' type='button' class='btn btn-success' data-toggle='modal' data-target='#userModal'>EDIT</button>
-                                <button id='userdeleteid' type='button' class='btn btn-danger' onclick='deleteusermodal(" . $row['ID'] . ")' data-toggle='modal' data-target='#deleteModal'>DELETE</button>
-                           </nobr>
-                         </div> "
-
-        );
-    }
-
-    $response = array("draw" => intval($draw), "iTotalRecords" => $totalRecords, "iTotalDisplayRecords" => $totalRecordflt, "data" => $table_data);
-    echo json_encode($response);
-
-
-} elseif ($_POST['action'] == 'edit') {
-    $id = mysqli_real_escape_string($conn, $_POST['usereditid']);
-    //printArray($id);
-    $sql = "SELECT first_name,
-                              last_name,
-                              atesia,
-                              phone,
-                              dob,
-                              email,
-                              username
-                              FROM adm WHERE ID='$id'";
-    $query_get_user = mysqli_query($conn, $sql);
-    if (!$query_get_user) {
-        echo json_encode(array('status' => '404', 'message' => 'Error ne databaze' . __LINE__));
-    }
-    $row = mysqli_fetch_assoc($query_get_user);
-    echo json_encode(array('status' => '200', 'message' => $row));
-    exit();
-} elseif ($_POST['action'] == 'profile') {
-    $id = mysqli_real_escape_string($conn, $_POST['usereditid']);
-    //printArray($id);
-    $sql = "SELECT first_name,
-                              last_name,
-                              atesia,
-                              phone,
-                              dob,
-                              email,
-                              images,
-                              username
-                              FROM adm WHERE ID='$id'";
-    $query_get_user = mysqli_query($conn, $sql);
-    if (!$query_get_user) {
-        echo json_encode(array('status' => '404', 'message' => 'Error ne databaze' . __LINE__));
-    }
-    $row = mysqli_fetch_assoc($query_get_user);
-    echo json_encode(array('status' => '200', 'message' => $row));
-    exit();
 }

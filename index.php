@@ -1,4 +1,5 @@
-<?php require_once 'header.php ' ?>
+<?php require_once 'header.php ';
+?>
 <style>
     body, html {
         height: 100%;
@@ -6,12 +7,12 @@
         background-image: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));
     }
 </style>
-<header>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
-</header>
+<!DOCTYPE html>
+<html>
 <body>
+<?php include_once "header.php";?>
 <!-- Login page  -->
-<div class="container">
+<div class="container" id="enter">
     <div class="card card-container">
         <span id="error"></span>
         <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
@@ -20,10 +21,10 @@
         <span id="reauth-email" class="reauth-email"></span>
         <input type="email" name="uname" id="uname" class="form-control" placeholder="Email address">
         <input type="password" name="pass" id="pass" class="form-control" placeholder="Password">
-        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" onclick="login();" id="Sign_in">Sign
+        <button class="btn btn-lg btn-primary btn-block btn-signin"  type="submit" onclick="login();" id="Sign_in">Sign
             in
         </button>
-        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" data-toggle="modal"
+        <button class="btn btn-lg btn-primary btn-block btn-signin post"  type="submit" data-toggle="modal"
                 data-target="#exampleModal" id="Sign_in">Sign up
         </button>
     </div>
@@ -93,161 +94,9 @@
     </div>
 </div>
 </body>
+<?php
+include_once "footer.php";
+include_once "script.php";
 
-<script>
-    function login() {
-        let uname = $('#uname').val();
-        let pass = $('#pass').val();
-
-        $('#error').val('')
-
-        $.ajax({
-
-            url: 'ajax.php',
-            type: 'POST',
-            data: {
-                'action': 'login',
-                'uname': uname,
-                'pass': pass,
-            },
-            dataType: 'json',
-            success: function (response) {
-                if (response.status == 200) {
-                    window.location.href = 'welcome.php'
-                } else {
-                    toastr.error(response.message)
-                    toastr.options.preventDuplicates = true;
-
-                }
-            }
-        });
-    }
-
-    function signup() {
-        let first_name = $('#first_name').val();
-        let last_name = $('#last_name').val();
-        let atesia = $('#atesia').val();
-        let phone = $('#phone').val();
-        let birthday = $('#birthday').val();
-        let email = $('#email').val();
-        let password = $('#password').val();
-        let cpassword = $('#cpassword').val();
-        let name_regex = /^[A-Za-z\s]+$/;
-        let last_regex = /^[A-Za-z\s]+$/;
-        let atesia_regex = /^[A-Za-z\s]+$/;
-        let phone_regex = /^[0-9]+$/;
-        let email_regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        let birthday_regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
-        let password_regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,1000}$/;
-
-        if (!name_regex.test(first_name) || !last_regex.test(last_name) || !atesia_regex.test(atesia) || !phone_regex.test(phone) || !email_regex.test(email) || !birthday_regex.test(birthday)) {
-            $('#first_name').addClass('red_border');
-            if (!name_regex.test(first_name)) {
-                $('#first_name').addClass('red_border');
-                //toastr.error("Emri jo i sakte");
-            } else {
-                $('#first_name').removeClass('red_border');
-            }
-            $('#last_name').addClass('red_border');
-            if (!last_regex.test(last_name)) {
-                $('#last_name').addClass('red_border');
-                //toastr.error("Mbiemri jo i sakte");
-            } else {
-                $('#last_name').removeClass('red_border');
-            }
-            $('#atesia').addClass('red_border');
-            if (!atesia_regex.test(atesia)) {
-                $('#atesia').addClass('red_border');
-                //toastr.error("Vendosni atesine");
-            } else {
-                $('#atesia').removeClass('red_border');
-            }
-            if (!phone_regex.test(phone)) {
-                $('#phone').addClass('red_border');
-                //toastr.error("Vendosni numrin e telefonit");
-
-            } else {
-                $('#phone').removeClass('red_border');
-
-            }
-            if (!birthday_regex.test(birthday)) {
-                $('#birthday').addClass('red_border');
-            } else {
-                $('#birthday').removeClass('red_border');
-            }
-            if (!email_regex.test(email)) {
-                $('#email').addClass('red_border');
-                //toastr.error("Email jo i sakte");
-
-            } else {
-                $('#email').removeClass('red_border');
-            }
-            if (!password_regex.test(password)) {
-                $('#password').addClass('red_border');
-                //toastr.error("Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character");
-            } else {
-                $('#password').removeClass('red_border');
-            }
-            toastr.error("Te gjitha fushat duhen plotesuar");
-            toastr.options.preventDuplicates = true;
-            return;
-        }
-
-
-        $.ajax({
-
-            url: 'ajax.php',
-            type: 'POST',
-            data: {
-                'action': 'signup',
-                'first_name': first_name,
-                'last_name': last_name,
-                'atesia': atesia,
-                'phone': phone,
-                'birthday': birthday,
-                'email': email,
-                'password': password,
-                'cpassword':cpassword,
-            },
-            dataType: 'json',
-            success: function (response) {
-                if (response.status == 200) {
-                    swal('Success', response.message);
-                    window.location.href = 'index.php'
-                } else {
-                    toastr.error(response.message)
-                }
-            }
-        });
-    }
-
-    //Plotesimi automatik i username-it
-    function fillUsername() {
-        let first_name = $('#first_name').val();
-        let last_name = $('#last_name').val();
-        let name_regex = /^[A-Za-z\s]+$/;
-        if (name_regex.test(first_name) && name_regex.test(last_name)) {
-            $('#username').val((first_name[0] + last_name).toLowerCase());
-        }
-    }
-//datarange picker
-    $(function () {
-
-
-        $('input[name="birthday"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            minYear: 2000,
-            maxYear: parseInt(moment().format('YYYY'), 10),
-            locale: {
-                format: 'YYYY-MM-DD'
-            }
-
-        }, function (start, end, label) {
-            var years = moment().diff(start, 'years');
-
-        });
-        $('#birthday').val('')
-    });
-</script>
+?>
 </html>
