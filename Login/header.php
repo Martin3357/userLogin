@@ -1,14 +1,13 @@
 <?php
 session_start();
-require_once 'db_conn.php';
-require_once 'db.php';
-require_once 'functions.php';
+require_once '../db_conn.php';
 ?>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
+    <link rel = "icon" type = "image/*" href = "../images/login.png">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

@@ -3,8 +3,7 @@ session_start();
 
 error_reporting(E_ALL & ~E_NOTICE);
 
-require_once "functions.php";
-require_once "db_conn.php";
+require_once "../db_conn.php";
 if ($_POST['action'] == 'login') {
 
     $uname = trim(mysqli_real_escape_string($conn, $_POST['uname']));

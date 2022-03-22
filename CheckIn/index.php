@@ -3,11 +3,10 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 session_start();
 if ($_SESSION['Roli'] != 'admin') {
-    header('Location:'.'http://localhost/Projekti/'.'index2.php');
+    header('Location:'.'http://localhost/Projekti/'.'index.php');
 }
 include_once "CheckIn/header.php";
 ?>
-    <link rel="stylesheet" href="style.css">
     <div class="content">
         <br><br>
         <div class="row">
@@ -46,5 +45,4 @@ include_once "CheckIn/header.php";
     </div>
 <?php
 include_once "CheckIn/footer.php";
-include_once "script.php";
 ?>

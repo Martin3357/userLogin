@@ -1,6 +1,5 @@
-<script>
+$('#profili').addClass('active');
 
-    $('#profili').addClass('active');
 //Funksioni per mbushjen automatike e profilit
 function userFill(userID) {
     $.ajax({
@@ -20,7 +19,7 @@ function userFill(userID) {
                 $('#phone').val(response.message['phone']);
                 $('#email').val(response.message['email']);
                 $('#userid').val(userID);
-                $('#img').attr('src',"http://localhost/Projekti/"+ response.message['images']);
+                $('#img').attr('src', "http://localhost/Projekti/" + response.message['images']);
                 // console.log(response.message['images']);
                 //$('#image').val(response.message['images']);
 
@@ -34,7 +33,6 @@ function userFill(userID) {
 }
 
 // A $( document ).ready() block.
-$(document).ready(userFill(<?=$_SESSION['id']?>))
 
 //Modifikimi i te dhenave te profilit
 function updateProfile() {
@@ -113,6 +111,7 @@ function updateProfile() {
         }
     });
 }
+
 //funksioni per ndryshimin e fjalkalimit
 function updatepassword() {
     //let userID = $('#userid').val();
@@ -187,4 +186,3 @@ function updatepassword() {
             }
         });
 }
-</script>

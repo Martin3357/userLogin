@@ -6,7 +6,7 @@
 }
 
 #customers th, td {
-    border: 1px solid black;
+    border-bottom: 1px solid #04AA6D;
     border-collapse: collapse;
 }
 
@@ -25,4 +25,7 @@
 
 .hide_row {
     display: none;
+}
+.bottomBorder {
+    border-bottom: 12px #04AA6D;
 }

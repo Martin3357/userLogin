@@ -4,7 +4,6 @@ session_start();
 
 error_reporting(E_ALL & ~E_NOTICE);
 
-require_once "../functions.php";
 require_once "../db_conn.php";
 //Kushti per shtimin e nje useri te ri
 if ($_POST['action'] == 'register') {
@@ -301,8 +300,8 @@ elseif ($_POST['action'] == 'list') {
             "birthday" => $row['birthday'],
             "post" => $row['post'],
             "images" => $image,
-            "action" => "<div class='row'>
-                            <nobr>
+            "action" => "<div class='row mt-2'>
+                            <nobr class='mx-4'>
                                 <button class='usereditid btn btn-success' value='" . $row['ID'] . "' onclick='allowShowUser(" . $row['ID'] . ")'  type='button'> EDIT </button>
                                 <button id='userdeleteid' type='button' class='btn btn-danger' onclick='deleteusermodal(" . $row['ID'] . ")' data-toggle='modal' data-target='#deleteModal'>DELETE</button>
                            </nobr>

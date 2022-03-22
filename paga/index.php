@@ -1,7 +1,7 @@
 <?php
 session_start();
 if ($_SESSION['Roli'] != 'admin') {
-    header('Location:'.'http://localhost/Projekti/'.'index2.php');
+    header('Location:' . 'http://localhost/Projekti/' . 'index.php');
 }
 
 require_once "db.php";
@@ -9,23 +9,21 @@ require_once "back.php";
 //require_once "functions.php";
 ?>
 <br><br><br>
-<div class="table-responsive">
-    <table class="table" border="1" id="customers">
-        <thead>
+<link rel="stylesheet" href="paga/style.css">
+<div class="table-responsive mx-3">
+    <table class="table " id="customers">
+        <thead class="bottomBorder">
         <tr>
-            <th scope="col" colspan="2" style="text-align: center">Emer Mbiemer</th>
+            <th scope="col" colspan="2" style="text-align: center; padding-bottom: 50px;" rowspan="2">Emer Mbiemer</th>
             <th scope="col" colspan="3" style="text-align: center">OretIN</th>
             <th scope="col" colspan="3" style="text-align: center">OretOUT</th>
             <th scope="col" colspan="3" style="text-align: center">Oret Totale</th>
             <th scope="col" colspan="4" style="text-align: center">PagesaIN</th>
             <th scope="col" colspan="4" style="text-align: center">PagesaOUT</th>
-            <th scope="col" style="text-align: center">Total Pagesa</th>
+            <th scope="col" style="text-align: center; padding-bottom: 50px;" rowspan="2">Total Pagesa</th>
         </tr>
-        </thead>
-        <tbody>
 
         <tr style="background-color: orange">
-            <td style="background: #04AA6D" colspan="2"></td>
             <td>Oret Dite Jave</td>
             <td>Oret Fundjave</td>
             <td>Oret Ditepushimi</td>
@@ -43,9 +41,11 @@ require_once "back.php";
             <td>Paga Fundjave</td>
             <td>Paga Ditepushimi</td>
             <td>Totali</td>
-            <td style="background-color: #04AA6D;"></td>
 
         </tr>
+        </thead>
+        <tbody>
+
 
         <?php
         $n = 0;
@@ -84,7 +84,7 @@ require_once "back.php";
                             class="btn btn-plus"><i class="fa fa-plus" aria-hidden="true"></i></button>
                 </td>
                 <!--                    Mbushim tabelen me te dhenat perkatese -->
-                <td ><?= $row['emri'] ?></td>
+                <td><?= $row['emri'] ?></td>
                 <td><?= $row['oretInJave'] ?> orë</td>
                 <td><?= $row['oretInDiteP'] ?> orë</td>
                 <td><?= $row['oretInDiteS'] ?> orë</td>
@@ -149,7 +149,7 @@ require_once "back.php";
             <?php
         } ?>
         </tbody>
-        <tfoot >
+        <tfoot>
         <tr style="background-color: lightsalmon">
             <!--                Mbushim nen tableen me te dhenat perkates-->
             <td>Totali</td>
@@ -178,6 +178,5 @@ require_once "back.php";
     </table>
 </div>
 
-<?php include_once "script.php"?>
 
 
