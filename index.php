@@ -37,13 +37,14 @@ switch ($_GET['page']) {
         break;
     default:
         $title = 'Home';
-        $includeFile = '';
+        $includeFile = 'includes/ora.php';
+        $includeScript = 'includes/script.js';
 }
 //print_r($includeFile);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -55,6 +56,7 @@ switch ($_GET['page']) {
     <link rel="stylesheet" href="Produktet/style.css">
     <link rel="stylesheet" href="CheckIn/style.css">
     <link rel="stylesheet" href="user-list/style.css">
+    <link rel="stylesheet" href="includes/style.css">
     <link href="profile/script.js">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
