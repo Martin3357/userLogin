@@ -133,7 +133,7 @@ require_once "produktetBack.php";
 
         <tr style="background-color: #ffce5b;border-top-style:solid">
             <td><i class="fa fa-calculator" aria-hidden="true"></i>Totali</td>
-            <td><a href="index2.php?page=Produktet&ids=<?php
+            <td><a href="index.php?page=Produktet&ids=<?php
                 foreach ($products_data['product_details'] as $key => $row) {
                     echo $row['id'] . ";";
                 } ?>" target="_blank">(<?= $k ?>) Produkte</a></td>

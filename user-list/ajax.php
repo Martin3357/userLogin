@@ -208,7 +208,7 @@ elseif ($_POST['action'] == 'list') {
      * numrin tital e marrim permes ketij query
      */
     $query_without_ftl = "SELECT COUNT(*) AS allcount 
-                          FROM adm where 1 = 1  $data_flt_query $emailFilter $phone_flt_query $client_filter $searchQuery";
+                          FROM adm where 1 = 1 ";
 
     $reuslt_without_ftl = mysqli_query($conn, $query_without_ftl);
     if (!$reuslt_without_ftl) {

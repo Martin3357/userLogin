@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php?page=">Welcome <?php echo $_SESSION['first_name'] ?></a>
+    <a class="navbar-brand" href="index.php?page=ora.php">Welcome <?php echo $_SESSION['first_name'] ?></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
             aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

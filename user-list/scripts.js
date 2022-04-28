@@ -21,7 +21,8 @@ $(function () {
 
 
 //datatable
-    function showUserTable(ids) {
+function showUserTable(ids) {
+
 
     window.dt = $('#datatable').DataTable({
         processing: true,
@@ -46,6 +47,7 @@ $(function () {
                 data.phone_search = $('#nr_Tel').val();
                 data.action = 'list';
                 data.name_serch_product = ids;
+
 // console.log(data.name_serch_product);
             }
         },
@@ -102,11 +104,14 @@ $(function () {
                 '<option value="50">50</option>' +
                 '<option value="-1">All</option>' +
                 '</select> records',
+        }
+    });
+
 }
-});
-    }
+
 //funksioni per te bere aoutocomplete modalin pasi shtypim edit
 function allowShowUser(userID) {
+
 
     $.ajax({
 
@@ -145,6 +150,7 @@ function allowShowUser(userID) {
 
 //funksioni per shtimin e nje useri te ri
 function addUser() {
+
     let first_name = $('#addfirst_name').val();
     let last_name = $('#addlast_name').val();
     let atesia = $('#addatesia').val();

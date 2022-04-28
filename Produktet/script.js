@@ -3,6 +3,7 @@ $('#produktet').addClass('active');
 //funksionet per shfaqjen e nentabelave
 
 function toggleTable(id) {
+
     if ($('#tabela_' + id).hasClass('hide_row')) {
         $('#tabela_' + id).removeClass('hide_row');
         $('#plusi_' + id).html('<i class="fa fa-minus-circle" aria-hidden="true"></i>');
@@ -12,6 +13,7 @@ function toggleTable(id) {
         $('#plusi_' + id).html('<i class="fa fa-plus-circle" aria-hidden="true"></i>');
     }
 }
+
 
 function toggleTable_i(id) {
     if ($('#tabela_i' + id).hasClass('hide_row_i')) {
